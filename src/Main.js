@@ -1,4 +1,7 @@
-export class Menu
+const startOfYesterday = require('date-fns/startOfYesterday');
+const format = require('date-fns/format');
+const startOfToday = require('date-fns/startOfToday')
+module.exports=class Menu
 {
     /**
      * The NCCO Stack
@@ -33,7 +36,7 @@ export class Menu
     searchAction(request)
     {
         if(request.dtmf) {
-            const dates = [new \DateTime('yesterday'), new \DateTime('today'), new \DateTime('last week')];
+            const dates = [format(startOfYesterday(),"iiii MMMM do"), new \DateTime('today'), new \DateTime('last week')];
             $status = ['shipped', 'backordered', 'pending'];
 
             $this.append({

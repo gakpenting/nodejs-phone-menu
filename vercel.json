@@ -1,0 +1,12 @@
+{
+    "builds": [
+         { "src": "*.js", "use": "@vercel/node" }
+    ],
+    "routes": [
+        { "src": "/answer",  "dest": "/index2.js" },
+        { "src": "/event",  "dest": "/index2.js" },
+        { "src": "/dtmf",  "dest": "/index2.js" },
+        { "src": "/",  "dest": "/index2.js" }
+        
+      ]
+  }
