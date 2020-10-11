@@ -1,36 +1,21 @@
-const app = require('express')()
-const bodyParser = require('body-parser')
+const ltrim = require("ltrim");
+const Menu = require("./src/Menu");
+module.exports = (req, res) => {
+  const uri = ltrim(req.url.split("?")[0], "/");
+  const data = req.body;
+  const config = "https://" + req.headers.host;
+  switch (uri) {
+    case "event":
+      console.log(data);
+      break;
 
-app.use(bodyParser.json())
+    default:
+      let ivr = new Menu(config);
+      let method = uri.toLowerCase() + "Action";
 
-app.get('/answer', (req, res) => {
-  const ncco = [{
-      action: 'talk',
-      bargeIn: true,
-      text: 'Hello. Please enter a digit.'
-    },
-    {
-      action: 'input',
-      maxDigits: 1,
-      eventUrl: [`${req.protocol}://${req.get('host')}/webhooks/dtmf`]
-    }
-  ]
-
-  res.json(ncco)
-})
-
-app.post('/event', (req, res) => {
-  console.log(req.body)
-  res.send(200);
-})
-
-app.post('/dtmf', (req, res) => {
-  const ncco = [{
-    action: 'talk',
-    text: `You pressed ${req.body.dtmf}`
-  }]
-
-  res.json(ncco)
-})
-
-app.listen(3000)
+      ivr[method](data);
+      res.json(ivr.getStack());
+      break;
+    // code block
+  }
+};
