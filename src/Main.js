@@ -1,6 +1,7 @@
 const startOfYesterday = require('date-fns/startOfYesterday');
 const format = require('date-fns/format');
 const startOfToday = require('date-fns/startOfToday')
+const lastDayOfWeek = require('date-fns/lastDayOfWeek');
 module.exports=class Menu
 {
     /**
@@ -36,14 +37,15 @@ module.exports=class Menu
     searchAction(request)
     {
         if(request.dtmf) {
-            const dates = [format(startOfYesterday(),"iiii MMMM do"), new \DateTime('today'), new \DateTime('last week')];
-            $status = ['shipped', 'backordered', 'pending'];
-
-            $this.append({
+            const dates = [startOfYesterday(), startOfToday(), lastDayOfWeek(startOfToday())];
+            const status = ['shipped', 'backordered', 'pending'];
+            const randStatus=Math.floor(Math.random() * status.length);
+            const randDates=Math.floor(Math.random() * dates.length);
+            this.append({
                 'action' : 'talk',
                 'text' : `Your order ${this.talkCharacters(request.dtmf)}
-                          ${this.talkStatus($status[array_rand($status)])}
-                        as  of  ${this.talkDate($dates[array_rand($dates)])}`
+                          ${this.talkStatus(status[randStatus])}
+                        as  of  ${this.talkDate(dates[randDates])}`
             });
         }
 
@@ -57,22 +59,22 @@ module.exports=class Menu
 
     promptSearch()
     {
-        $this->append([
-            'action' => 'talk',
-            'text' => 'Using the numbers on your phone, enter your order number followed by the pound sign'
-        ]);
+        this.append({
+            'action' : 'talk',
+            'text' : 'Using the numbers on your phone, enter your order number followed by the pound sign'
+        });
 
-        $this->append([
-            'action' => 'input',
-            'eventUrl' => [$this->config['base_path'] . '/search'],
-            'timeOut' => '10',
-            'submitOnHash' => true
-        ]);
+        this.append({
+            'action' : 'input',
+            'eventUrl' : [this.config +'/search'],
+            'timeOut' : '10',
+            'submitOnHash' : true
+        });
     }
 
-    protected function talkStatus($status)
+    talkStatus(status)
     {
-        switch($status){
+        switch(status){
             case 'shipped':
                 return 'has been shipped';
             case 'pending':
@@ -84,28 +86,28 @@ module.exports=class Menu
         }
     }
 
-    protected function talkDate(\DateTime $date)
+    talkDate(date)
     {
-        return $date->format('l F jS');
+        return format(date,"iiii MMMM do");
     }
 
-    protected function talkCharacters($string)
+    talkCharacters(string)
     {
-        return implode(' ', str_split($string));
+        return string.split().join(" ");
     }
 
-    public function getStack()
+    getStack()
     {
-        return $this->ncco;
+        return this.ncco;
     }
 
-    protected function append($ncco)
+    append(ncco)
     {
-        array_push($this->ncco, $ncco);
+        this.ncco.push(ncco);
     }
 
-    protected function prepend($ncco)
+    prepend(ncco)
     {
-        array_unshift($this->ncco, $ncco);
+        this.ncco.unshift(ncco);
     }
 }
